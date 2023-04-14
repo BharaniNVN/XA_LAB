@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xa-dotnetapp-deployment
+  labels:
+    app: xa-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app:  xa-app
+  template:
+    metadata:
+      labels:
+        app:  xa-app
+    spec:
+      containers:
+      - name: dotnetapp
+        image: xaacr.azurecr.io/dotnetapp:$(Build.BuildId)
+        ports:
+        - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: xa-dotnetapp-service
+spec:
+  selector:
+    app:  xa-app
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer
